@@ -34,19 +34,7 @@ jobs:
       
       - name: 使用 PyInstaller 打包
         run: |
-          pyinstaller --name="即梦AI生图" ^
-            --windowed ^
-            --onedir ^
-            --icon=NONE ^
-            --add-data "即梦AI生图.py;." ^
-            --hidden-import=PyQt6 ^
-            --hidden-import=PyQt6.QtWidgets ^
-            --hidden-import=PyQt6.QtCore ^
-            --hidden-import=PyQt6.QtGui ^
-            --hidden-import=requests ^
-            --collect-all=PyQt6 ^
-            --noconfirm ^
-            "即梦AI生图.py"
+          pyinstaller --name="即梦AI生图" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --noconfirm "即梦AI生图.py"
       
       - name: 打包为 zip
         run: |
