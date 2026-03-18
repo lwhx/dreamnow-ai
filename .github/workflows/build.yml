@@ -47,7 +47,7 @@ jobs:
       
       - name: 使用 UPX 压缩 EXE
         run: |
-          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma $_.FullName }
+          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma --force $_.FullName }
       
       - name: 打包为 zip
         run: |
