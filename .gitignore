@@ -1,0 +1,27 @@
+# 即梦AI生图 - Git 忽略配置
+
+# 配置文件（包含 API 地址等敏感信息）
+C:\即梦ai配置\
+即梦ai配置/
+
+# PyInstaller 构建产物
+dist/
+build/
+*.spec
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db

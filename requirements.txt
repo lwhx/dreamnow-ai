@@ -1,0 +1,4 @@
+# 即梦AI生图工具依赖
+requests>=2.28.0
+PyQt6>=6.5.0
+pyinstaller>=5.13.0

@@ -229,7 +229,8 @@ class ImageListWidget(QListWidget):
 # ==================== 配置常量 ====================
 
 # API 地址
-API_URL = "http://106.53.88.254:9000/v1/images/compositions"
+# API 地址（请在设置中配置）
+API_URL = ""
 
 # 可选的宽高比
 RATIO_OPTIONS = ["1:1", "3:4", "4:3", "9:16", "16:9", "3:2", "2:3", "21:9"]
