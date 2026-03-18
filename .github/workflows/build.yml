@@ -43,7 +43,9 @@ jobs:
       
       - name: 使用 PyInstaller 打包
         run: |
-          pyinstaller --name="jimeng-ai" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --noconfirm "即梦AI生图.py"
+          pyinstaller --name="jimeng-ai" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --noconfirm --win-private-assemblies "即梦AI生图.py"
+        env:
+          CFLAGS: "-d2guard4"
       
       - name: 使用 UPX 压缩 EXE
         run: |
