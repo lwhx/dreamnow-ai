@@ -47,7 +47,8 @@ jobs:
       
       - name: 使用 UPX 压缩 EXE
         run: |
-          Get-ChildItem -Path "dist/即梦AI生图" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma $_.FullName }
+          chcp 65001
+          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma $_.FullName }
       
       - name: 打包为 zip
         run: |
