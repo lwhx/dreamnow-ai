@@ -41,23 +41,31 @@ jobs:
         run: pip install nuitka
 
       - name: 安装 MinGW-w64 (Nuitka 需要 C 编译器)
-        run: |
-          choco install mingw -y
+        run: choco install mingw -y
 
       - name: 使用 Nuitka 编译
         run: |
-          nuitka --standalone `
+          python -m nuitka --standalone `
             --onefile `
             --windows-disable-console `
-            --include-data-dir=assets=assets `
             --remove-output `
             --assume-yes-for-downloads `
-            --prefer-i386=no `
             --lto=auto `
             "即梦AI生图.py"
 
-      - name: 打包为 zip
-        run: Compress-Archive -Path "即梦AI生图.exe" -DestinationPath "jimeng-ai-win64.zip"
+      - name: 检查编译输出
+        run: Get-ChildItem -Path "." -Filter "*.exe" -Recurse | Select-Object FullName, Length
+
+      - name: 查找 EXE 文件并打包
+        run: |
+          $exe = Get-ChildItem -Path "." -Filter "*.exe" -Recurse | Select-Object -First 1
+          if ($exe) {
+            Write-Host "Found EXE: $($exe.FullName)"
+            Compress-Archive -Path $exe.FullName -DestinationPath "jimeng-ai-win64.zip"
+          } else {
+            Write-Host "No EXE found!"
+            exit 1
+          }
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
