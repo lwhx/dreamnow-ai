@@ -1,4 +1,5 @@
-name: Build EXE
+name: Build EXE (Nuitka)
+
 on:
   workflow_dispatch:
     inputs:
@@ -36,25 +37,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 使用 PyInstaller 打包（排除不需要的模块）
+      - name: 安装 Nuitka
+        run: pip install nuitka
+
+      - name: 安装 MinGW-w64 (Nuitka 需要 C 编译器)
         run: |
-          pyinstaller --name="jimeng-ai" --windowed --onefile --icon=NONE `
-            --exclude-module=PyQt6.QtBluetooth `
-            --exclude-module=PyQt6.QtLocation `
-            --exclude-module=PyQt6.QtPositioning `
-            --exclude-module=PyQt6.QtWebEngine `
-            --exclude-module=PyQt6.QtWebEngineWidgets `
-            --exclude-module=PyQt6.QtNetworkAuth `
-            --exclude-module=PyQt6.QtSensors `
-            --exclude-module=PyQt6.QtSerialPort `
-            --hidden-import=PyQt6.QtWidgets `
-            --hidden-import=PyQt6.QtCore `
-            --hidden-import=PyQt6.QtGui `
-            --hidden-import=requests `
-            --strip --noconfirm "即梦AI生图.py"
+          choco install mingw -y
+
+      - name: 使用 Nuitka 编译
+        run: |
+          nuitka --standalone `
+            --onefile `
+            --windows-disable-console `
+            --include-data-dir=assets=assets `
+            --remove-output `
+            --assume-yes-for-downloads `
+            --prefer-i386=no `
+            --lto=auto `
+            "即梦AI生图.py"
 
       - name: 打包为 zip
-        run: Compress-Archive -Path "dist/jimeng-ai.exe" -DestinationPath "jimeng-ai-win64.zip"
+        run: Compress-Archive -Path "即梦AI生图.exe" -DestinationPath "jimeng-ai-win64.zip"
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
