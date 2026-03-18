@@ -41,29 +41,36 @@ jobs:
         run: |
           choco install upx -y
 
-      - name: 使用 PyInstaller 打包
+      - name: 使用 PyInstaller 打包（单文件模式）
         run: |
-          pyinstaller --name="jimeng-ai" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --strip --optimize=2 --noconfirm "即梦AI生图.py"
+          pyinstaller --name="jimeng-ai" --windowed --onefile --icon=NONE `
+            --exclude-module=PyQt6.QtBluetooth `
+            --exclude-module=PyQt6.QtLocation `
+            --exclude-module=PyQt6.QtPositioning `
+            --exclude-module=PyQt6.QtWebEngine `
+            --exclude-module=PyQt6.QtWebEngineWidgets `
+            --exclude-module=PyQt6.QtNetworkAuth `
+            --hidden-import=PyQt6.QtWidgets `
+            --hidden-import=PyQt6.QtCore `
+            --hidden-import=PyQt6.QtGui `
+            --hidden-import=requests `
+            --strip --noconfirm "即梦AI生图.py"
 
-      - name: 使用 UPX 压缩 EXE
+      - name: 使用 UPX 压缩
+        run: upx --best --lzma "dist/jimeng-ai.exe"
+
+      - name: 清理不必要的 Qt 插件
         run: |
-          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma --overlay=strip $_.FullName }
+          # 这个步骤在 onedir 模式下才需要，onefile 模式可跳过
 
       - name: 打包为 zip
-        run: |
-          Compress-Archive -Path "dist/jimeng-ai" -DestinationPath "jimeng-ai-win64.zip"
+        run: Compress-Archive -Path "dist/jimeng-ai.exe" -DestinationPath "jimeng-ai-win64.zip"
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: jimeng-ai-win64
           path: jimeng-ai-win64.zip
-
-      - name: 上传 EXE 文件
-        uses: actions/upload-artifact@v4
-        with:
-          name: jimeng-ai-exe
-          path: dist/jimeng-ai/jimeng-ai.exe
 
   create-release:
     needs: build-windows
