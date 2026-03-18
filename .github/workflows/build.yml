@@ -22,45 +22,43 @@ jobs:
     runs-on: windows-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
-      
+
       - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: 安装 UPX 压缩工具
         run: |
           choco install upx -y
-      
+
       - name: 使用 PyInstaller 打包
         run: |
-          pyinstaller --name="jimeng-ai" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --noconfirm --win-private-assemblies "即梦AI生图.py"
-        env:
-          CFLAGS: "-d2guard4"
-      
+          pyinstaller --name="jimeng-ai" --windowed --onedir --icon=NONE --add-data "即梦AI生图.py;." --hidden-import=PyQt6 --hidden-import=PyQt6.QtWidgets --hidden-import=PyQt6.QtCore --hidden-import=PyQt6.QtGui --hidden-import=requests --collect-all=PyQt6 --strip --optimize=2 --noconfirm "即梦AI生图.py"
+
       - name: 使用 UPX 压缩 EXE
         run: |
-          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma --force $_.FullName }
-      
+          Get-ChildItem -Path "dist" -Filter "*.exe" -Recurse | ForEach-Object { upx --best --lzma --overlay=strip $_.FullName }
+
       - name: 打包为 zip
         run: |
           Compress-Archive -Path "dist/jimeng-ai" -DestinationPath "jimeng-ai-win64.zip"
-      
+
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: jimeng-ai-win64
           path: jimeng-ai-win64.zip
-      
+
       - name: 上传 EXE 文件
         uses: actions/upload-artifact@v4
         with:
@@ -71,14 +69,14 @@ jobs:
     needs: build-windows
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
-    
+
     steps:
       - name: 下载构建产物
         uses: actions/download-artifact@v4
         with:
           name: jimeng-ai-win64
           path: .
-      
+
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
         with:
