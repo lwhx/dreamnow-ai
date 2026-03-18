@@ -1,4 +1,5 @@
 name: Build EXE
+
 on:
   workflow_dispatch:
     inputs:
@@ -53,14 +54,11 @@ jobs:
             --hidden-import=requests `
             --strip --noconfirm "即梦AI生图.py"
 
-      - name: 打包为 zip
-        run: Compress-Archive -Path "dist/jimeng-ai.exe" -DestinationPath "jimeng-ai-win64.zip"
-
-      - name: 上传构建产物
+      - name: 上传 EXE 文件
         uses: actions/upload-artifact@v4
         with:
-          name: jimeng-ai-win64
-          path: jimeng-ai-win64.zip
+          name: jimeng-ai-exe
+          path: dist/jimeng-ai.exe
 
   create-release:
     needs: build-windows
@@ -68,15 +66,15 @@ jobs:
     if: github.event_name == 'release'
 
     steps:
-      - name: 下载构建产物
+      - name: 下载 EXE 文件
         uses: actions/download-artifact@v4
         with:
-          name: jimeng-ai-win64
+          name: jimeng-ai-exe
           path: .
 
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
         with:
-          files: jimeng-ai-win64.zip
+          files: jimeng-ai.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
