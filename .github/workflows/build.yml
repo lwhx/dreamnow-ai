@@ -1,12 +1,16 @@
 name: Build EXE
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号'
+        required: false
+        default: '1.0.0'
   push:
     branches: [main]
     tags:
       - 'v*'
-  pull_request:
-    branches: [main]
   release:
     types: [published]
 
